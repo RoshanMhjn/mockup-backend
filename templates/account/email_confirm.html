@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Confirm Email</title>
+  </head>
+  <body>
+    <h2>Email Confirmation</h2>
+
+    {% if confirmation %}
+    <p>
+      Please confirm that
+      <strong>{{ confirmation.email_address.email }}</strong>
+      is your email address.
+    </p>
+
+    <form method="post">
+      {% csrf_token %}
+      <button type="submit">Confirm Email</button>
+    </form>
+    {% else %}
+    <p>This confirmation link is invalid or has expired.</p>
+    {% endif %}
+  </body>
+</html>

@@ -1,0 +1,61 @@
+{% extends "email/base.html" %} {% block title %}Verify Your Email - Kagazzy{%
+endblock %} {% block content %}
+<h1 class="main-heading">Welcome to Kagazzy! 🎨</h1>
+
+<p class="sub-heading">
+  Hi {{ user.first_name }},<br />
+  Thanks for joining our creative community! Please verify your email address to
+  complete your registration.
+</p>
+
+<a href="{{ verification_url }}" class="cta-button">
+  Verify My Email Address
+</a>
+
+<div class="divider"></div>
+
+<p class="info-text">
+  Or copy and paste this link into your browser:<br />
+  <span style="word-break: break-all; color: #667eea"
+    >{{ verification_url }}</span
+  >
+</p>
+
+<div class="warning-box">
+  <p class="warning-text">
+    <strong>Security Notice:</strong> This verification link will expire in 24
+    hours. If you didn't create a Kagazzy account, please ignore this email.
+  </p>
+</div>
+
+<div class="divider"></div>
+
+<p class="info-text">
+  <strong>What's next?</strong><br />
+  Once verified, you'll be able to:
+</p>
+
+<div style="text-align: left; max-width: 300px; margin: 20px auto">
+  <p style="font-size: 14px; color: #4a5568; margin: 8px 0">
+    ✨ Upload and sell your artwork
+  </p>
+  <p style="font-size: 14px; color: #4a5568; margin: 8px 0">
+    🛍️ Create custom merchandise
+  </p>
+  <p style="font-size: 14px; color: #4a5568; margin: 8px 0">
+    💰 Earn royalties from your designs
+  </p>
+  <p style="font-size: 14px; color: #4a5568; margin: 8px 0">
+    🎯 Connect with other artists
+  </p>
+</div>
+
+<div class="divider"></div>
+
+<p class="info-text">
+  Need help? Contact our support team at
+  <a href="mailto:support@Kagazzy.com" style="color: #667eea"
+    >support@Kagazzy.com</a
+  >
+</p>
+{% endblock %}

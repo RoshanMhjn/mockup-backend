@@ -1,0 +1,53 @@
+{% extends "email/base.html" %} {% block title %}Reset Your Password - Kagazzy{%
+endblock %} {% block content %}
+<h1 class="main-heading">Reset Your Password 🔐</h1>
+
+<p class="sub-heading">
+  Hi {{ user.first_name }},<br />
+  We received a request to reset your Kagazzy account password.
+</p>
+
+<a href="{{ reset_url }}" class="cta-button"> Reset My Password </a>
+
+<div class="divider"></div>
+
+<p class="info-text">
+  Or copy and paste this link into your browser:<br />
+  <span style="word-break: break-all; color: #667eea">{{ reset_url }}</span>
+</p>
+
+<div class="warning-box">
+  <p class="warning-text">
+    <strong>Security Notice:</strong> This password reset link will expire in 1
+    hour. If you didn't request a password reset, please ignore this email or
+    contact support if you have concerns.
+  </p>
+</div>
+
+<div class="divider"></div>
+
+<p class="info-text">
+  <strong>Security Tips:</strong>
+</p>
+
+<div style="text-align: left; max-width: 300px; margin: 20px auto">
+  <p style="font-size: 13px; color: #4a5568; margin: 8px 0">
+    🔒 Use a strong, unique password
+  </p>
+  <p style="font-size: 13px; color: #4a5568; margin: 8px 0">
+    📱 Consider using a password manager
+  </p>
+  <p style="font-size: 13px; color: #4a5568; margin: 8px 0">
+    🚫 Never share your password with others
+  </p>
+</div>
+
+<div class="divider"></div>
+
+<p class="info-text">
+  Need help? Contact our security team at
+  <a href="mailto:security@Kagazzy.com" style="color: #667eea"
+    >security@Kagazzy.com</a
+  >
+</p>
+{% endblock %}
