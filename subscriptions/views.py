@@ -1,9 +1,12 @@
 from django.shortcuts import render
 from rest_framework import generics, permissions
+from rest_framework.views import APIView
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from .models import SubscriptionPlan
+
+from .models import SubscriptionPlan, UserSubscription
 from .serializers import (
-  SubscriptionLimitsSerializer, SubscriptionPlanSerializer, UserSubscriptionSerializer 
+  SubscriptionLimitsSerializer, SubscriptionPlanSerializer, UserSubscriptionSerializer, MySubscriptionSerializer 
 )
 
 # Create your views here.
@@ -16,16 +19,6 @@ class SubscriptionPlanListView(generics.ListAPIView):
   
   def get_queryset(self):
     return SubscriptionPlan.objects.filter(is_active=True).order_by('price')
-
-class MySubscriptionView(generics.RetrieveAPIView):
-    """
-    Auth: get current user's subscription
-    """
-    serializer_class = UserSubscriptionSerializer
-
-    def get_object(self):
-        return self.request.user.subscription
-
 
 class SubscriptionLimitsView(generics.GenericAPIView):
     """
@@ -45,4 +38,22 @@ class SubscriptionLimitsView(generics.GenericAPIView):
         }
 
         serializer = self.get_serializer(data)
+        return Response(serializer.data)
+
+class MySubscriptionView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        try:
+            subscription = UserSubscription.objects.select_related('plan').get(
+                user=request.user,
+                status='active'
+            )
+        except UserSubscription.DoesNotExist:
+            return Response(
+                {"detail": "No active subscription"},
+                status=404
+            )
+
+        serializer = MySubscriptionSerializer(subscription)
         return Response(serializer.data)

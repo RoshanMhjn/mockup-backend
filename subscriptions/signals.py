@@ -2,12 +2,11 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.contrib.auth import get_user_model
 from django.utils import timezone
+from django.conf import settings
 
-from .models import SubscriptionPlan, UserSubscription
+from subscriptions.models import SubscriptionPlan, UserSubscription
 
-User = get_user_model()
-
-@receiver(post_save, sender=User)
+@receiver(post_save, sender=settings.AUTH_USER_MODEL)
 def create_free_subscription(sender, instance, created, **kwargs):
     if not created:
         return
@@ -16,9 +15,9 @@ def create_free_subscription(sender, instance, created, **kwargs):
     if not free_plan:
         return
 
-    UserSubscription.objects.create(
+    UserSubscription.objects.get_or_create(
         user=instance,
-        plan=free_plan,
-        status='active',
-        started_at=timezone.now()
+        defaults={
+          "plan": free_plan
+        }
     )

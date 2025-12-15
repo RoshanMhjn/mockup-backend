@@ -15,7 +15,10 @@ def create_free_subscription(sender, instance, created, **kwargs):
     if not created:
         return
     
-    free_plan = SubscriptionPlan.objects.get(code='free')
+    free_plan = SubscriptionPlan.objects.filter(code='free').first()
+    
+    if not free_plan:
+        return
     
     UserSubscription.objects.create(
         user=instance,
