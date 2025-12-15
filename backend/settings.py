@@ -68,7 +68,7 @@ INSTALLED_APPS = [
     'backend',
     'accounts.apps.AccountsConfig',
     'subscriptions',
-    
+    'mockups'
 ]
 
 MIDDLEWARE = [
