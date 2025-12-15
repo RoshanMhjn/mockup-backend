@@ -8,6 +8,7 @@ from .models import SubscriptionPlan, UserSubscription
 from .serializers import (
   SubscriptionLimitsSerializer, SubscriptionPlanSerializer, UserSubscriptionSerializer, MySubscriptionSerializer 
 )
+from .services import get_current_usage, can_generate_mockup
 
 # Create your views here.
 
@@ -57,3 +58,18 @@ class MySubscriptionView(APIView):
 
         serializer = MySubscriptionSerializer(subscription)
         return Response(serializer.data)
+
+class MockupUsageView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        usage = get_current_usage(request.user)
+        subscription = request.user.subscription
+
+        return Response({
+            "used": usage.used_count,
+            "limit": subscription.plan.max_mockups_per_month,
+            "remaining": max(
+                subscription.plan.max_mockups_per_month - usage.used_count, 0
+            )
+        })

@@ -67,3 +67,25 @@ class UserSubscription(models.Model):
 
     def __str__(self):
         return f"{self.user.email} → {self.plan.code}"
+
+class UserMockupUsage(models.Model):
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="mockup_usages"
+    )
+
+    year = models.PositiveIntegerField()
+    month = models.PositiveIntegerField()
+
+    used_count = models.PositiveIntegerField(default=0)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        unique_together = ("user", "year", "month")
+        ordering = ["-year", "-month"]
+
+    def __str__(self):
+        return f"{self.user.email} - {self.year}/{self.month} ({self.used_count})"
