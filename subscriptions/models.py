@@ -5,39 +5,39 @@ from django.utils import timezone
 # Create your models here.
 
 class SubscriptionPlan(models.Model):
-  PLAN_CHOICES = (
+    PLAN_CHOICES = (
     ('free', 'Free'),
     ('pro', 'Pro'),
     ('team', 'Team'),
-  )
-  
-  code = models.CharField(
+    )
+
+    code = models.CharField(
     max_length=20,
     choices=PLAN_CHOICES,
     unique=True
-  )
-  
-  name = models.CharField(max_length=50)
-  price = models.DecimalField(max_digits=8, decimal_places=2, default=0)
-  currency = models.CharField(max_length=10, default='USD')
-  
-  #feature
-  
-  max_mockups_per_month = models.IntegerField(default=5)
-  can_export_hd = models.BooleanField(default=False)
-  can_remove_watermark = models.BooleanField(default=False)
-  can_use_premium_templates = models.BooleanField(default=False)
-  
-  is_active = models.BooleanField(default=True)
-  
-  created_at = models.DateTimeField(auto_now_add=True)
-  
-  class Meta:
+    )
+    
+    name = models.CharField(max_length=50)
+    price = models.DecimalField(max_digits=8, decimal_places=2, default=0)
+    currency = models.CharField(max_length=10, default='USD')
+    
+    #feature
+    
+    max_mockups_per_month = models.IntegerField(default=5)
+    allow_hd_export = models.BooleanField(default=False)
+    remove_watermark = models.BooleanField(default=False)
+    can_use_premium_templates = models.BooleanField(default=False)
+    
+    is_active = models.BooleanField(default=True)
+    
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
         db_table = 'subscription_plans'
-  
-  def __str__(self):
+    
+    def __str__(self):
         return self.name
-      
+
 class UserSubscription(models.Model):
     STATUS_CHOICES = (
         ('active', 'Active'),
