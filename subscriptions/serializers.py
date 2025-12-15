@@ -1,6 +1,7 @@
 
 from rest_framework import serializers
 from .models import SubscriptionPlan, UserSubscription
+from subscriptions.permissions import require_hd_export
 
 class SubscriptionPlanSerializer(serializers.ModelSerializer):
   class Meta:
@@ -67,3 +68,14 @@ class MySubscriptionSerializer(serializers.ModelSerializer):
             'started_at',
             'expires_at',
         ]
+
+class MockupExportSerializer(serializers.Serializer):
+    export_type = serializers.ChoiceField(choices=["sd", "hd"])
+
+    def validate_export_type(self, value):
+        request = self.context["request"]
+
+        if value == "hd":
+            require_hd_export(request.user)
+
+        return value

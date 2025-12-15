@@ -10,6 +10,11 @@ from .serializers import (
 )
 from .services import get_current_usage, can_generate_mockup
 
+from subscriptions.permissions import (
+  require_hd_export,
+  should_apply_watermark
+)
+
 # Create your views here.
 
 class SubscriptionPlanListView(generics.ListAPIView):
@@ -72,4 +77,20 @@ class MockupUsageView(APIView):
             "remaining": max(
                 subscription.plan.max_mockups_per_month - usage.used_count, 0
             )
+        })
+
+class ExportMockupView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        export_type = request.data.get("type", "sd")
+
+        if export_type == "hd":
+            require_hd_export(request.user)
+
+        apply_watermark = should_apply_watermark(request.user)
+
+        return Response({
+            "export_type": export_type,
+            "watermark_applied": apply_watermark
         })
