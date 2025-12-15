@@ -66,7 +66,7 @@ INSTALLED_APPS = [
     
     # Local apps
     'backend',
-    'accounts',
+    'accounts.apps.AccountsConfig',
     'subscriptions',
     
 ]

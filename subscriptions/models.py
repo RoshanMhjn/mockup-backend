@@ -1,3 +1,69 @@
 from django.db import models
+from django.conf import settings
+from django.utils import timezone
 
 # Create your models here.
+
+class SubscriptionPlan(models.Model):
+  PLAN_CHOICES = (
+    ('free', 'Free'),
+    ('pro', 'Pro'),
+    ('team', 'Team'),
+  )
+  
+  code = models.CharField(
+    max_length=20,
+    choices=PLAN_CHOICES,
+    unique=True
+  )
+  
+  name = models.CharField(max_length=50)
+  price = models.DecimalField(max_digits=8, decimal_places=2, default=0)
+  currency = models.CharField(max_length=10, default='USD')
+  
+  #feature
+  
+  max_mockups_per_month = models.IntegerField(default=5)
+  can_export_hd = models.BooleanField(default=False)
+  can_remove_watermark = models.BooleanField(default=False)
+  can_use_premium_templates = models.BooleanField(default=False)
+  
+  is_active = models.BooleanField(default=True)
+  
+  created_at = models.DateTimeField(auto_now_add=True)
+  
+  class Meta:
+        db_table = 'subscription_plans'
+  
+  def __str__(self):
+        return self.name
+      
+class UserSubscription(models.Model):
+    STATUS_CHOICES = (
+        ('active', 'Active'),
+        ('expired', 'Expired'),
+        ('cancelled', 'Cancelled'),
+    )
+
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='subscription'
+    )
+    plan = models.ForeignKey(
+        SubscriptionPlan,
+        on_delete=models.PROTECT,
+        related_name='subscriptions'
+    )
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='active')
+
+    started_at = models.DateTimeField(default=timezone.now)
+    expires_at = models.DateTimeField(null=True, blank=True)
+
+    def is_active(self):
+        if self.expires_at:
+            return self.expires_at > timezone.now()
+        return self.status == 'active'
+
+    def __str__(self):
+        return f"{self.user.email} → {self.plan.code}"
