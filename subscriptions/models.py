@@ -26,7 +26,7 @@ class SubscriptionPlan(models.Model):
     max_mockups_per_month = models.IntegerField(default=5)
     allow_hd_export = models.BooleanField(default=False)
     remove_watermark = models.BooleanField(default=False)
-    can_use_premium_templates = models.BooleanField(default=False)
+    allow_premium_templates = models.BooleanField(default=False)
     
     is_active = models.BooleanField(default=True)
     
@@ -61,9 +61,11 @@ class UserSubscription(models.Model):
     expires_at = models.DateTimeField(null=True, blank=True)
 
     def is_active(self):
+        if self.status!= "active":
+            return False
         if self.expires_at:
             return self.expires_at > timezone.now()
-        return self.status == 'active'
+        return True
 
     def __str__(self):
         return f"{self.user.email} → {self.plan.code}"

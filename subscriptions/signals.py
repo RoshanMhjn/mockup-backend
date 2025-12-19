@@ -18,6 +18,6 @@ def create_free_subscription(sender, instance, created, **kwargs):
     UserSubscription.objects.get_or_create(
         user=instance,
         defaults={
-          "plan": free_plan
+        "plan": free_plan
         }
     )

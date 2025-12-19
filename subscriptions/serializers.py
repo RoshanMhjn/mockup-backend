@@ -15,6 +15,7 @@ class SubscriptionPlanSerializer(serializers.ModelSerializer):
       'max_mockups_per_month',
       'allow_hd_export',
       'remove_watermark',
+      'allow_premium_templates',
     ]
   
 class UserSubscriptionSerializer(serializers.ModelSerializer):
@@ -34,6 +35,7 @@ class SubscriptionLimitsSerializer(serializers.Serializer):
   max_mockups_per_month = serializers.IntegerField()
   allow_hd_export = serializers.BooleanField()
   remove_watermark = serializers.BooleanField()
+  allow_premium_templates = serializers.BooleanField()
 
 class MySubscriptionSerializer(serializers.ModelSerializer):
     plan = serializers.CharField(source='plan.code')

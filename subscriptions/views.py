@@ -41,7 +41,8 @@ class SubscriptionLimitsView(generics.GenericAPIView):
             'max_mockups_per_month': plan.max_mockups_per_month,
             'allow_hd_export': plan.allow_hd_export,
             'remove_watermark': plan.remove_watermark,
-        }
+            'allow_premium_templates': plan.allow_premium_templates,
+            }
 
         serializer = self.get_serializer(data)
         return Response(serializer.data)
