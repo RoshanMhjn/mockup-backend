@@ -81,3 +81,8 @@ class MockupExportSerializer(serializers.Serializer):
             require_hd_export(request.user)
 
         return value
+
+class UpgradeSubscriptionSerializer(serializers.Serializer):
+    plan_code = serializers.ChoiceField(
+        choices=["pro", "team"]
+    )

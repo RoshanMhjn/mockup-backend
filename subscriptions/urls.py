@@ -3,7 +3,7 @@ from .views import (
     SubscriptionPlanListView,
     MySubscriptionView,
     SubscriptionLimitsView,
-    MockupUsageView
+    MockupUsageView, UpgradeSubscriptionView
 )
 
 urlpatterns = [
@@ -11,4 +11,5 @@ urlpatterns = [
     path('me/', MySubscriptionView.as_view(), name='my-subscription'),
     path('limits/', SubscriptionLimitsView.as_view(), name='subscription-limits'),
     path("usage/", MockupUsageView.as_view(), name="mockup-usage"),
+    path("upgrade/", UpgradeSubscriptionView.as_view(), name="upgrade-plan"),
 ]

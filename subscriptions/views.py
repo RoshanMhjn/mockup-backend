@@ -1,30 +1,30 @@
 from django.shortcuts import render
-from rest_framework import generics, permissions
+from rest_framework import generics, permissions, status
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from .models import SubscriptionPlan, UserSubscription
 from .serializers import (
-  SubscriptionLimitsSerializer, SubscriptionPlanSerializer, UserSubscriptionSerializer, MySubscriptionSerializer 
+    SubscriptionLimitsSerializer, SubscriptionPlanSerializer, UserSubscriptionSerializer, MySubscriptionSerializer, UpgradeSubscriptionSerializer 
 )
 from .services import get_current_usage, can_generate_mockup
 
 from subscriptions.permissions import (
-  require_hd_export,
-  should_apply_watermark
+    require_hd_export,
+    should_apply_watermark
 )
 
 # Create your views here.
 
 class SubscriptionPlanListView(generics.ListAPIView):
-  """list all subscription plans"""
+    """list all subscription plans"""
 
-  permission_classes = [permissions.AllowAny]
-  serializer_class = SubscriptionPlanSerializer
+    permission_classes = [permissions.AllowAny]
+    serializer_class = SubscriptionPlanSerializer
   
-  def get_queryset(self):
-    return SubscriptionPlan.objects.filter(is_active=True).order_by('price')
+    def get_queryset(self):
+        return SubscriptionPlan.objects.filter(is_active=True).order_by('price')
 
 class SubscriptionLimitsView(generics.GenericAPIView):
     """
@@ -95,3 +95,47 @@ class ExportMockupView(APIView):
             "export_type": export_type,
             "watermark_applied": apply_watermark
         })
+        
+class UpgradeSubscriptionView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        serializer = UpgradeSubscriptionSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        plan_code = serializer.validated_data["plan_code"]
+
+        try:
+            new_plan = SubscriptionPlan.objects.get(
+                code=plan_code,
+                is_active=True
+            )
+        except SubscriptionPlan.DoesNotExist:
+            return Response(
+                {"detail": "Invalid plan"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        subscription = request.user.subscription
+
+        if subscription.plan.code == new_plan.code:
+            return Response(
+                {"detail": "You are already on this plan"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+            
+        if new_plan.price < subscription.plan.price:
+            return Response(
+                {"detail": "Downgrades are not allowed"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+            
+        subscription.plan = new_plan
+        subscription.status = "active"
+        subscription.expires_at = None
+        subscription.save()
+
+        return Response(
+            MySubscriptionSerializer(subscription).data,
+            status=status.HTTP_200_OK
+        )
