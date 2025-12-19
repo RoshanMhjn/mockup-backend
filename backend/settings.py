@@ -35,9 +35,9 @@ DEBUG = env('DEBUG')
 
 ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=['localhost', '127.0.0.1'])
 
-CSRF_TRUSTED_ORIGINS = env.list('CSRF_TRUSTED_ORIGINS', default=['http://localhost:3000', 'http://127.0.0.1:3000'])
+CSRF_TRUSTED_ORIGINS = ['http://localhost:5173', 'http://127.0.0.1:5173']
 
-CORS_ORIGIN_WHITELIST = env.list('CORS_ORIGIN_WHITELIST', default=['http://localhost:3000', 'http://127.0.0.1:3000'])
+CORS_ORIGIN_WHITELIST = ['http://localhost:5173', 'http://127.0.0.1:5173']
 
 
 # Application definition
@@ -163,12 +163,12 @@ MEDIA_ROOT = BASE_DIR / 'media'
 # Custom user model
 AUTH_USER_MODEL = 'accounts.User'
 
-CORS_ALLOWED_ORIGINS = env.list('CORS_ALLOWED_ORIGINS', default=[
+CORS_ALLOWED_ORIGINS = [
     'http://localhost:5173',
     'http://127.0.0.1:5173',
     'http://localhost:3000',
     'http://127.0.0.1:3000',
-])
+]
 
 CORS_ALLOW_CREDENTIALS = True
 
@@ -195,9 +195,14 @@ REST_FRAMEWORK = {
 REST_USE_JWT = True
 JWT_AUTH_COOKIE = 'mockup-auth'
 JWT_AUTH_REFRESH_COOKIE = 'mockup-refresh-token'
-JWT_AUTH_SAMESITE = 'Lax'
-JWT_AUTH_SECURE = not DEBUG
+JWT_AUTH_SAMESITE = 'None'
+JWT_AUTH_SECURE = False
 
+REST_AUTH = {
+    "JWT_AUTH_COOKIE_USE_CSRF": False,
+    "REGISTER_SERIALIZER": "accounts.serializers.CustomRegisterSerializer",
+    "USER_DETAILS_SERIALIZER": "accounts.serializers.CustomUserDetailsSerializer",
+}
 
 
 # Default primary key field type
