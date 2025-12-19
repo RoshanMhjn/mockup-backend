@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser, UserManager
 from django.utils.translation import gettext_lazy as _
 import uuid
+from allauth.account.models import EmailAddress
 
 # Create your models here.
 
@@ -44,7 +45,6 @@ class User(AbstractUser):
   email = models.EmailField(_("email address"), unique=True)
   phone_number = models.CharField(max_length=20, blank=True)
   
-  email_verified = models.BooleanField(default=False)
   
   created_at = models.DateTimeField(auto_now_add=True)
   updated_at = models.DateTimeField(auto_now=True)
@@ -65,3 +65,10 @@ class User(AbstractUser):
   @property
   def full_name(self):
         return f"{self.first_name} {self.last_name}".strip() or self.username
+  
+  @property
+  def email_verified(self):
+    return EmailAddress.objects.filter(
+      user=self,
+      verified=True
+    ).exists()
