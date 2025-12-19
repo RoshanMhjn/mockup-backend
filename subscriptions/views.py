@@ -9,6 +9,7 @@ from .serializers import (
     SubscriptionLimitsSerializer, SubscriptionPlanSerializer, UserSubscriptionSerializer, MySubscriptionSerializer, UpgradeSubscriptionSerializer 
 )
 from .services import get_current_usage, can_generate_mockup
+from .stripe_service import create_checkout_session
 
 from subscriptions.permissions import (
     require_hd_export,
@@ -95,47 +96,18 @@ class ExportMockupView(APIView):
             "export_type": export_type,
             "watermark_applied": apply_watermark
         })
-        
-class UpgradeSubscriptionView(APIView):
+
+class CreateCheckoutSessionView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
-        serializer = UpgradeSubscriptionSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-
-        plan_code = serializer.validated_data["plan_code"]
+        plan_code = request.data.get("plan")
 
         try:
-            new_plan = SubscriptionPlan.objects.get(
-                code=plan_code,
-                is_active=True
-            )
+            plan = SubscriptionPlan.objects.get(code=plan_code, is_active=True)
         except SubscriptionPlan.DoesNotExist:
-            return Response(
-                {"detail": "Invalid plan"},
-                status=status.HTTP_400_BAD_REQUEST
-            )
+            return Response({"detail": "Invalid plan"}, status=400)
 
-        subscription = request.user.subscription
+        session = create_checkout_session(request.user, plan)
 
-        if subscription.plan.code == new_plan.code:
-            return Response(
-                {"detail": "You are already on this plan"},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-            
-        if new_plan.price < subscription.plan.price:
-            return Response(
-                {"detail": "Downgrades are not allowed"},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-            
-        subscription.plan = new_plan
-        subscription.status = "active"
-        subscription.expires_at = None
-        subscription.save()
-
-        return Response(
-            MySubscriptionSerializer(subscription).data,
-            status=status.HTTP_200_OK
-        )
+        return Response({"checkout_url": session.url})

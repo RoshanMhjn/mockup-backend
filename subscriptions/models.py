@@ -20,6 +20,7 @@ class SubscriptionPlan(models.Model):
     name = models.CharField(max_length=50)
     price = models.DecimalField(max_digits=8, decimal_places=2, default=0)
     currency = models.CharField(max_length=10, default='USD')
+    stripe_price_id = models.CharField(max_length=100, blank=True, null=True)
     
     #feature
     
@@ -55,6 +56,14 @@ class UserSubscription(models.Model):
         on_delete=models.PROTECT,
         related_name='subscriptions'
     )
+    
+    stripe_subscription_id = models.CharField(
+        max_length=255,
+        blank=True,
+        null=True,
+        unique=True
+    )
+    
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='active')
 
     started_at = models.DateTimeField(default=timezone.now)

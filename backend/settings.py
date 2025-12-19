@@ -279,3 +279,9 @@ if DEBUG and not EMAIL_HOST_USER:
 else:
     # Use SMTP when credentials are provided
     EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+
+
+# Stripe settings
+STRIPE_SECRET_KEY = env("STRIPE_SECRET_KEY")
+STRIPE_PUBLISHABLE_KEY = env("STRIPE_PUBLISHABLE_KEY")
+STRIPE_WEBHOOK_SECRET = env("STRIPE_WEBHOOK_SECRET")
