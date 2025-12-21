@@ -83,6 +83,13 @@ MIDDLEWARE = [
     'allauth.account.middleware.AccountMiddleware',
 ]
 
+AUTHENTICATION_BACKENDS = (
+    "django.contrib.auth.backends.ModelBackend",
+    "allauth.account.auth_backends.AuthenticationBackend",
+)
+
+SITE_ID = 1
+
 ROOT_URLCONF = 'backend.urls'
 
 TEMPLATES = [
@@ -231,6 +238,12 @@ SOCIALACCOUNT_PROVIDERS = {
             'access_type': 'online',
         },
         'OAUTH_PKCE_ENABLED': True,
+        'APP': {
+            'client_id': env('GOOGLE_CLIENT_ID'),
+            'secret': env('GOOGLE_CLIENT_SECRET'),
+            "key": ""
+        },
+        'REDIRECT_URL': "http://localhost:5173/auth/google/callback"
     },
     'facebook': {
         'METHOD': 'oauth2',
