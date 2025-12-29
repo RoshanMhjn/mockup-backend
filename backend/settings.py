@@ -302,7 +302,7 @@ STRIPE_WEBHOOK_SECRET = env("STRIPE_WEBHOOK_SECRET")
 
 # MINIO / S3 Storage Configuration
 
-USE_MINIO = env.bool("USE_MINIO", default=True)
+USE_MINIO = env.bool("USE_MINIO", default=False)
 
 if USE_MINIO:
     DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
@@ -319,3 +319,6 @@ if USE_MINIO:
 
     AWS_DEFAULT_ACL = None
     AWS_QUERYSTRING_AUTH = False 
+
+else:
+    DEFAULT_FILE_STORAGE = "django.core.files.storage.FileSystemStorage"
