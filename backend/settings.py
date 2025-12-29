@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'storages',
     
     # Third party apps
     'rest_framework',
@@ -298,3 +299,23 @@ else:
 STRIPE_SECRET_KEY = env("STRIPE_SECRET_KEY")
 STRIPE_PUBLISHABLE_KEY = env("STRIPE_PUBLISHABLE_KEY")
 STRIPE_WEBHOOK_SECRET = env("STRIPE_WEBHOOK_SECRET")
+
+# MINIO / S3 Storage Configuration
+
+USE_MINIO = env.bool("USE_MINIO", default=True)
+
+if USE_MINIO:
+    DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
+
+    AWS_ACCESS_KEY_ID = env("MINIO_ACCESS_KEY")
+    AWS_SECRET_ACCESS_KEY = env("MINIO_SECRET_KEY")
+
+    AWS_STORAGE_BUCKET_NAME = env("MINIO_BUCKET_NAME")
+    AWS_S3_ENDPOINT_URL = env("MINIO_ENDPOINT")
+
+    AWS_S3_REGION_NAME = "us-east-1"
+    AWS_S3_SIGNATURE_VERSION = "s3v4"
+    AWS_S3_ADDRESSING_STYLE = "path"
+
+    AWS_DEFAULT_ACL = None
+    AWS_QUERYSTRING_AUTH = False 
