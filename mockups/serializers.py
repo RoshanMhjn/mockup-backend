@@ -24,8 +24,34 @@ class MockupTemplateSerializer(serializers.ModelSerializer):
             "preview_image_url",
         ]
 
+class MockupTemplateDetailSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MockupTemplate
+        fields = [
+            "id",
+            "psd_path",
+            "smart_object_name",
+            "bound_width",
+            "bound_height",
+            "bound_x",
+            "bound_y",
+        ]
+
 class GeneratedMockupSerializer(serializers.ModelSerializer):
     class Meta:
         model = GeneratedMockup
         fields = "__all__"
         read_only_fields = ("user", "created_at")
+
+class AdminMockupTemplateCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MockupTemplate
+        fields = [
+            "id",
+            "name",
+            "description",
+            "psd_path",
+            "smart_object_name",
+            "preview_image_url",
+        ]
+        read_only_fields = ("id",)
